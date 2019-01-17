@@ -26,8 +26,8 @@ describe Oystercard do
 
    describe '#touch_in_touch_out' do
 
-     let(:station) { double :station }
-
+     let(:station) { double :xyz }
+     
      before(:each) do
        @card = subject
        @card.top_up(15)
@@ -76,7 +76,8 @@ describe Oystercard do
      it "see all previous trips" do
        subject.touch_in(station)
        subject.touch_out(station)
-       # p travel_history
+       subject.touch_in(station)
+       subject.touch_out(station)
        expect(subject.previous_trips).to include travel_history
      end
 

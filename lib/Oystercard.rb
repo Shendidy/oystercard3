@@ -35,7 +35,7 @@ class Oystercard
      deduct(MINIMUM_FARE)
      @station = station
      @travel_history[-1][:out] = @journey.end_journey(station)
-     erase_station
+     @station = nil
   end
 
   def previous_trips
@@ -45,10 +45,6 @@ class Oystercard
   def deduct(amount)
     @balance -= amount
   end
-
-  # def record_travel(status)
-  # status == "in" ? @travel_history << {in: @station} : @travel_history[-1][:out] = @station
-  # end
 
   def erase_station
     @station = nil
