@@ -76,7 +76,7 @@ describe Oystercard do
      it "see all previous trips" do
        subject.touch_in(station)
        subject.touch_out(station)
-       p travel_history
+       # p travel_history
        expect(subject.previous_trips).to include travel_history
      end
 
