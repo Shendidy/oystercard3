@@ -23,15 +23,15 @@ class Oystercard
   end
 
   def touch_in(station)
-    raise "insufficient funds < #{MINIMUM_BALANCE}" if @balance < MINIMUM_BALANCE
-    raise "Already on a journey" if in_journey?
+    #raise "insufficient funds < #{MINIMUM_BALANCE}" if @balance < MINIMUM_BALANCE
+    #raise "Already on a journey" if in_journey?
     @journey = Journey.new
     @station = station
     @travel_history << @journey.start_journey(station)
   end
 
   def touch_out(station)
-     raise "Can't touch out twice!" unless in_journey?
+    #  raise "Can't touch out twice!" unless in_journey?
      deduct(MINIMUM_FARE)
      @station = station
      @travel_history[-1][:out] = @journey.end_journey(station)
