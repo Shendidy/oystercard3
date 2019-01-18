@@ -1,8 +1,9 @@
-require 'Journey'
+require_relative './journey'
 
 class Oystercard
   MAXIMUM_BALANCE = 90
   MINIMUM_BALANCE = 1
+  PENALTY = 6
   attr_accessor :balance, :station, :travel_history, :fare
 
   def initialize
@@ -23,18 +24,36 @@ class Oystercard
 
   def touch_in(station)
     raise "insufficient funds < #{MINIMUM_BALANCE}" if @balance < MINIMUM_BALANCE
-    raise "Already on a journey" if in_journey?
-    @journey = Journey.new
-    @station = station
-    @travel_history << @journey.start_journey(station)
+    # if touched in twice then they jumped fence on last journey, no error to be raised and a touch out will be trigerred with PENALTY as a station, then a normal touch in will be triggered
+    touch_out("PENALTY") if in_journey?
+    @travel_history << start_journey_hash(station)
   end
 
   def touch_out(station)
-     raise "Can't touch out twice!" unless in_journey?
-     deduct(@fare = @journey.fare)
-     @station = station
-     @travel_history[-1][:out] = @journey.end_journey(station)
-     @station = nil
+    # if touched out twice then they jumped fence on entry, no error to be raised and a touch out will be trigerred with PENALTY as a station!
+    touch_in("PENALTY") unless in_journey?
+    @station = station
+    complete_travel_history
+  end
+
+  def complete_travel_history
+    @travel_history[-1][:out] = end_journey_hash
+    deduct(@fare = @journey.fare)
+    @station = nil
+  end
+
+  def start_journey_hash(station)
+    @journey = new_journey
+    @station = station
+    @journey.start_journey(@station)
+  end
+
+  def new_journey
+    Journey.new
+  end
+
+  def end_journey_hash
+    @journey.end_journey(@station)
   end
 
   def previous_trips

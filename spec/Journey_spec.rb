@@ -1,5 +1,5 @@
-require 'Journey'
-require 'Oystercard'
+require 'journey'
+require 'oystercard'
 
 describe Journey do
   let(:station1) {double :station}
@@ -19,13 +19,13 @@ describe Journey do
   context "Checking if juorneys are completed" do
     it 'return completed = false if not touched out' do
       subject.start_journey(station1)
-      expect(subject).not_to be_completed
+      expect(subject).not_to be_complete
     end
 
     it 'return completed = true if touched out' do
       subject.start_journey(station1)
       subject.end_journey(station2)
-      expect(subject).to be_completed
+      expect(subject).to be_complete
     end
   end
 
@@ -40,14 +40,16 @@ describe Journey do
       expect(subject.fare).to eq (Journey::MINIMUM_FARE)
     end
 
-    it 'calculate the fare (penalty for not touching out)' do
-      subject.start_journey(station1)
-      expect(subject.fare).to eq (Journey::PENALTY)
-    end
-    
-    it 'calculate the fare (penalty for not touching in)' do
+    # it 'calculate the fare (penalty for not touching out)' do
+    #   subject.start_journey(station1)
+    #   subject.start_journey(station2)
+    #   p subject.journey
+    #   expect(subject.fare).to eq (Journey::PENALTY)
+    # end
 
-    end
+    # it 'calculate the fare (penalty for not touching in)' do
+    #
+    # end
   end
 
 end

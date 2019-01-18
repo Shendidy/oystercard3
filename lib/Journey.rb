@@ -5,11 +5,13 @@ class Journey
 
   attr_reader :journey
 
-  def initialize(journey = {})
+  def initialize(journey = {}, entry = "Aldgate East")
     @journey = journey
+    @journey_completed = true
+    @entry = entry
   end
 
-  def start_journey(station)
+  def start_journey(station = @entry)
     @station = station
     record_travel("in")
   end
@@ -21,14 +23,19 @@ class Journey
   end
 
   def record_travel(status)
+    status == "out" ? @journey_completed = true : @journey_completed = false
     status == "in" ? @journey = {:in => @station} : @journey[:out] = @station
   end
 
   def fare
-    @journey.count == 2 ? MINIMUM_FARE : @journey.count == 1 ? PENALTY : 0
+    # Penalties:
+    # If entering while the last trip didn't have an out hash element.
+    # If exiting while there is no entering record.
+    #
+    @journey[:in] != nil && @journey[:out] != nil && @journey[:in] != "PENALTY" && @journey[:out] != "PENALTY" ? MINIMUM_FARE : @journey[:in] == "PENALTY" || @journey[:out] == "PENALTY" ? PENALTY : 0
   end
 
-  def completed?
-    @journey[:out] == nil ? false : true
+  def complete?
+    @journey_completed
   end
 end

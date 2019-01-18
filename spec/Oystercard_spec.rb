@@ -1,4 +1,4 @@
-require "Oystercard"
+require "oystercard"
 
 describe Oystercard do
 
@@ -22,70 +22,81 @@ describe Oystercard do
       .to raise_error "Maximum balanced is £#{Oystercard::MAXIMUM_BALANCE}"
     end
 
-   end
+  end
 
-   describe '#touch_in_touch_out' do
+  describe '#touch_in_touch_out' do
 
-     let(:station) { double :xyz }
+    let(:station) { double :xyz }
 
-     before(:each) do
-       @card = subject
-       @card.top_up(15)
-     end
+    before(:each) do
+      @card = subject
+      @card.top_up(15)
+    end
 
-     it "start out of the journey" do
-       expect(@card).not_to be_in_journey
-     end
+    it "start out of the journey" do
+      expect(@card).not_to be_in_journey
+    end
 
-     it "change the in_use attribute to true" do
-       @card.touch_in(station)
-       expect(@card).to be_in_journey
-     end
+    it "change the in_use attribute to true" do
+      @card.touch_in(station)
+      expect(@card).to be_in_journey
+    end
 
-     it "change the in_use attribute to false" do
-       @card.touch_in(station)
-       @card.touch_out(station)
-       expect(@card).not_to be_in_journey
-     end
+    it "change the in_use attribute to false" do
+      @card.touch_in(station)
+      @card.touch_out(station)
+      expect(@card).not_to be_in_journey
+    end
 
-     it "not be able to touch in if balance under £1" do
-       card = Oystercard.new
-       expect { card.touch_in(station) }
-       .to raise_error "insufficient funds < #{Oystercard::MINIMUM_BALANCE}"
-     end
+    it "not be able to touch in if balance under £1" do
+      card = Oystercard.new
+      expect { card.touch_in(station) }.to raise_error "insufficient funds < #{Oystercard::MINIMUM_BALANCE}"
+    end
 
-     it "charge the user when touch_out" do
-       initial_balance = subject.balance
-       subject.touch_in(station)
-       subject.touch_out(station)
-       new_balance = subject.balance
-       expect(initial_balance - new_balance).to eq subject.fare
-     end
+    it "charge the user when touch_out" do
+      initial_balance = subject.balance
+      subject.touch_in(station)
+      subject.touch_out(station)
+      new_balance = subject.balance
+      expect(initial_balance - new_balance).to eq subject.fare
+    end
 
-     it "forget where I have travelled from" do
-       subject.touch_in(station)
-       expect { subject.touch_out(station) }
-       .to change { subject.station }.to be_nil
-     end
+    it "forget where I have travelled from" do
+      subject.touch_in(station)
+      expect { subject.touch_out(station) }
+      .to change { subject.station }.to be_nil
+    end
 
-     it "in_journey return true" do
-       subject.touch_in(station)
-       expect(subject.in_journey?).to be true
-     end
+    it "in_journey return true" do
+      subject.touch_in(station)
+      expect(subject.in_journey?).to be true
+    end
 
-     let(:travel_history){ { in: station, out: station } }
+    let(:travel_history){ { in: station, out: station } }
 
-     it "see all previous trips" do
-       subject.touch_in(station)
-       subject.touch_out(station)
-       subject.touch_in(station)
-       subject.touch_out(station)
-       expect(subject.previous_trips).to include travel_history
-     end
+    it "see all previous trips" do
+      subject.touch_in(station)
+      subject.touch_out(station)
+      subject.touch_in(station)
+      subject.touch_out(station)
+      expect(subject.previous_trips).to include travel_history
+    end
 
-     it "has an empty travel_history by default" do
+    it "has an empty travel_history by default" do
       expect(subject.previous_trips).to eq []
-     end
+    end
 
-   end
+    it 'calculate the fare (penalty for not touching out)' do
+      subject.top_up(10)
+      subject.touch_in(station)
+
+      expect { subject.touch_in(station) }.to change { subject.balance }.by (-Oystercard::PENALTY)
+    end
+
+    it 'calculate the fare (penalty for not touching in)' do
+      subject.top_up(10)
+
+      expect { subject.touch_out(station) }.to change { subject.balance }.by (-Oystercard::PENALTY)
+    end
+  end
 end
