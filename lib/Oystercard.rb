@@ -53,7 +53,7 @@ class Oystercard
   end
 
   def end_journey_hash
-    @journey.end_journey(@station)
+    @journey.finish(@station)
   end
 
   def previous_trips

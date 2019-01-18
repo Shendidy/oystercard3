@@ -16,7 +16,7 @@ class Journey
     record_travel("in")
   end
 
-  def end_journey(station)
+  def finish(station)
     @station = station
     record_travel("out")
     station

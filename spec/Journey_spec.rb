@@ -12,7 +12,7 @@ describe Journey do
 
   it 'finishes a journey' do
     subject.start_journey(station1)
-    subject.end_journey(station2)
+    subject.finish(station2)
     expect(subject.journey).to eq ({in: station1, out: station2})
   end
 
@@ -24,7 +24,7 @@ describe Journey do
 
     it 'return completed = true if touched out' do
       subject.start_journey(station1)
-      subject.end_journey(station2)
+      subject.finish(station2)
       expect(subject).to be_complete
     end
   end
@@ -36,7 +36,7 @@ describe Journey do
 
     it 'calculate the fare of a completed journey (minimum fare for now)' do
       subject.start_journey(station1)
-      subject.end_journey(station2)
+      subject.finish(station2)
       expect(subject.fare).to eq (Journey::MINIMUM_FARE)
     end
 
