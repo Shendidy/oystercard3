@@ -27,7 +27,7 @@ describe Oystercard do
    describe '#touch_in_touch_out' do
 
      let(:station) { double :xyz }
-     
+
      before(:each) do
        @card = subject
        @card.top_up(15)
@@ -55,9 +55,11 @@ describe Oystercard do
      end
 
      it "charge the user when touch_out" do
+       initial_balance = subject.balance
        subject.touch_in(station)
-       expect { subject.touch_out(station) }.to change{ subject.balance }
-       .by (-Oystercard::MINIMUM_FARE)
+       subject.touch_out(station)
+       new_balance = subject.balance
+       expect(initial_balance - new_balance).to eq subject.fare
      end
 
      it "forget where I have travelled from" do

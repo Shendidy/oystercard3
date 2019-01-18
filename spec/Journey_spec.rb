@@ -2,22 +2,52 @@ require 'Journey'
 require 'Oystercard'
 
 describe Journey do
+  let(:station1) {double :station}
+  let(:station2) {double :station}
 
-  # it 'starts a journey' do
-  #   card = Oystercard.new
-  #   expect{ subject.start_journey }.to change { card.in_journey? }.to be_in_journey
-  # end
+  it 'starts a journey' do
+    subject.start_journey(station1)
+    expect(subject.record_travel("in")).to eq ({in: station1})
+  end
 
   it 'finishes a journey' do
+    subject.start_journey(station1)
+    subject.end_journey(station2)
+    expect(subject.journey).to eq ({in: station1, out: station2})
   end
 
-  it 'calculate the fare' do
+  context "Checking if juorneys are completed" do
+    it 'return completed = false if not touched out' do
+      subject.start_journey(station1)
+      expect(subject).not_to be_completed
+    end
 
+    it 'return completed = true if touched out' do
+      subject.start_journey(station1)
+      subject.end_journey(station2)
+      expect(subject).to be_completed
+    end
   end
 
-  it 'retun wether or not the journey is complete' do
+  context "calculating fares and penalties" do
+    it 'calculate the fare without any journeys' do
+      expect(subject.fare).to eq (0)
+    end
 
+    it 'calculate the fare of a completed journey (minimum fare for now)' do
+      subject.start_journey(station1)
+      subject.end_journey(station2)
+      expect(subject.fare).to eq (Journey::MINIMUM_FARE)
+    end
+
+    it 'calculate the fare (penalty for not touching out)' do
+      subject.start_journey(station1)
+      expect(subject.fare).to eq (Journey::PENALTY)
+    end
+    
+    it 'calculate the fare (penalty for not touching in)' do
+
+    end
   end
-
 
 end

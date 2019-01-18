@@ -1,19 +1,22 @@
 class Journey
 
-  def initialize()
-    @journey = {}
+  MINIMUM_FARE = 1
+  PENALTY = 6
+
+  attr_reader :journey
+
+  def initialize(journey = {})
+    @journey = journey
   end
 
   def start_journey(station)
-    check_errors(at_entry)
     @station = station
     record_travel("in")
   end
 
   def end_journey(station)
-    check_errors(at_exit)
-    # @station = station
-    # record_travel("out")
+    @station = station
+    record_travel("out")
     station
   end
 
@@ -21,21 +24,11 @@ class Journey
     status == "in" ? @journey = {:in => @station} : @journey[:out] = @station
   end
 
-  def calculate
+  def fare
+    @journey.count == 2 ? MINIMUM_FARE : @journey.count == 1 ? PENALTY : 0
   end
 
   def completed?
+    @journey[:out] == nil ? false : true
   end
-
-  def check_errors(when)
-    case when
-    when "at_entry"
-      raise "insufficient funds < #{MINIMUM_BALANCE}" if @balance < MINIMUM_BALANCE
-      raise "Already on a journey" if in_journey?
-    when "at_exit"
-      raise "Can't touch out twice!" unless in_journey?
-    end
-  end
-
-  private :check_errors
 end
