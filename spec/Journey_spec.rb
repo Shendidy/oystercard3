@@ -39,17 +39,5 @@ describe Journey do
       subject.finish(station2)
       expect(subject.fare).to eq (Journey::MINIMUM_FARE)
     end
-
-    # it 'calculate the fare (penalty for not touching out)' do
-    #   subject.start_journey(station1)
-    #   subject.start_journey(station2)
-    #   p subject.journey
-    #   expect(subject.fare).to eq (Journey::PENALTY)
-    # end
-
-    # it 'calculate the fare (penalty for not touching in)' do
-    #
-    # end
   end
-
 end
